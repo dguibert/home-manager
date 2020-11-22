@@ -271,6 +271,12 @@ let
         '';
       };
 
+      exec = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Specifies the Exec command for the Match";
+      };
+
       extraOptions = mkOption {
         type = types.attrsOf types.str;
         default = {};
@@ -282,7 +288,10 @@ let
   });
 
   matchBlockStr = cf: concatStringsSep "\n" (
-    ["Host ${cf.host}"]
+    [ (if (cf.exec == null)
+      then "Host ${cf.host}"
+      else "Match Host ${cf.host} Exec \"${cf.exec}\"")
+    ]
     ++ optional (cf.port != null)            "  Port ${toString cf.port}"
     ++ optional (cf.forwardAgent != null)    "  ForwardAgent ${yn cf.forwardAgent}"
     ++ optional cf.forwardX11                "  ForwardX11 yes"
