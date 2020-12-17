@@ -28,7 +28,7 @@ let
         // optionalAttrs (passwordCommand != null) {
           # msmtp requires the password to finish with a newline.
           passwordeval =
-            ''${pkgs.bash}/bin/bash -c "${toString passwordCommand}; echo"'';
+            ''${pkgs.bash}/bin/bash -c "${toString passwordCommand}"'';
         } // msmtp.extraConfig) ++ optional primary ''
 
           account default : ${name}'');
