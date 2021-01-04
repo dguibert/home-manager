@@ -271,6 +271,12 @@ let
         '';
       };
 
+      match = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Specifies wether to prepend the block with Match";
+      };
+
       exec = mkOption {
         type = types.nullOr types.str;
         default = null;
@@ -288,9 +294,7 @@ let
   });
 
   matchBlockStr = cf: concatStringsSep "\n" (
-    [ (if (cf.exec == null)
-      then "Host ${cf.host}"
-      else "Match Host ${cf.host} Exec \"${cf.exec}\"")
+    [ "${optionalString (cf.match || cf.exec != null) "Match "}Host ${cf.host}${optionalString (cf.exec != null) " Exec \"${cf.exec}\""}"
     ]
     ++ optional (cf.port != null)            "  Port ${toString cf.port}"
     ++ optional (cf.forwardAgent != null)    "  ForwardAgent ${yn cf.forwardAgent}"
