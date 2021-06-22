@@ -3,11 +3,15 @@
 with lib;
 
 let
+  isProprietaryChromeFun = browser: builtins.elem browser [
+    "google-chrome"
+    "google-chrome-beta"
+    "google-chrome-dev" ];
 
   browserModule = defaultPkg: name: visible:
     let
       browser = (builtins.parseDrvName defaultPkg.name).name;
-      isProprietaryChrome = hasPrefix "Google Chrome" name;
+      isProprietaryChrome = isProprietaryChromeFun browser;
     in {
       enable = mkOption {
         inherit visible;
@@ -105,6 +109,7 @@ let
 
       drvName = (builtins.parseDrvName cfg.package.name).name;
       browser = if drvName == "ungoogled-chromium" then "chromium" else drvName;
+      isProprietaryChrome = isProprietaryChromeFun browser;
 
       darwinDirs = {
         chromium = "Chromium";
@@ -133,7 +138,7 @@ let
 
     in mkIf cfg.enable {
       home.packages = [ cfg.package ];
-      home.file = listToAttrs (map extensionJson (cfg.extensions or [ ]));
+      home.file = mkIf (!isProprietaryChrome) (listToAttrs (map extensionJson (cfg.extensions or [ ])));
     };
 
 in {
