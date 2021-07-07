@@ -13,7 +13,7 @@ let
   pathStr = if path == null then "" else path;
 
   nixos-option = pkgs.nixos-option or (callPackage
-    (pkgs.path + "/nixos/modules/installer/tools/nixos-option") { });
+    (pkgs.path + "/nixos/modules/installer/tools/nixos-option") { nix = pkgs.nixStable; });
 
 in runCommand "home-manager" {
   preferLocalBuild = true;
