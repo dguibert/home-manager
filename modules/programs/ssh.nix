@@ -283,6 +283,12 @@ let
         description = "Specifies the Exec command for the Match";
       };
 
+      matchHeader = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Specifies the Match header (instead of Match Host host [Exec cmd])";
+      };
+
       extraOptions = mkOption {
         type = types.attrsOf types.str;
         default = {};
@@ -294,7 +300,8 @@ let
   });
 
   matchBlockStr = cf: concatStringsSep "\n" (
-    [ "${optionalString (cf.match || cf.exec != null) "Match "}Host ${cf.host}${optionalString (cf.exec != null) " Exec \"${cf.exec}\""}"
+    [ "${optionalString (cf.match || cf.exec != null || cf.matchHeader != null) "Match "}${if (cf.matchHeader == null) then "Host ${cf.host}${optionalString (cf.exec != null) " Exec \"${cf.exec}\""}"
+                                       else cf.matchHeader}"
     ]
     ++ optional (cf.port != null)            "  Port ${toString cf.port}"
     ++ optional (cf.forwardAgent != null)    "  ForwardAgent ${yn cf.forwardAgent}"
