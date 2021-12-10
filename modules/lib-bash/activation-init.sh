@@ -49,9 +49,9 @@ function setupVars() {
         mkdir -m 0755 -p "$hmProfilesDir"
     fi
 
-    declare -gr genProfilePath="$hmProfilesDir/home-manager"
+    declare -gr genProfilePath="$hmProfilesDir/@GEN_LINK_PREFIX@"
     declare -gr newGenPath="@GENERATION_DIR@";
-    declare -gr newGenGcPath="$hmGcrootsDir/current-home"
+    declare -gr newGenGcPath="$hmGcrootsDir/@GC_LINK_NAME@"
     declare -gr legacyGenGcPath="$globalGcrootsDir/current-home"
 
     declare greatestGenNum
