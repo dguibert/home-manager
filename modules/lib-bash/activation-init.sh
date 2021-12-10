@@ -55,9 +55,9 @@ function setupVars() {
         exit 1
     fi
 
-    declare -gr genProfilePath="$profilesDir/home-manager"
+    declare -gr genProfilePath="$profilesDir/@GEN_LINK_PREFIX@"
     declare -gr newGenPath="@GENERATION_DIR@";
-    declare -gr newGenGcPath="$hmGcrootsDir/current-home"
+    declare -gr newGenGcPath="$hmGcrootsDir/@GC_LINK_NAME@"
     declare -gr legacyGenGcPath="$globalGcrootsDir/current-home"
 
     declare greatestGenNum
