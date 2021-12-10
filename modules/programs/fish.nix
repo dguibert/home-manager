@@ -155,7 +155,7 @@ let
   translatedSessionVariables =
     pkgs.runCommandLocal "hm-session-vars.fish" { } ''
       ${pkgs.buildPackages.babelfish}/bin/babelfish \
-        <${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh \
+        <${config.home.profileDirectory}/etc/profile.d/${config.home.sessionVariablesFileName} \
         >$out
     '';
 
