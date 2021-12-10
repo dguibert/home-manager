@@ -11,9 +11,10 @@ function setupVars() {
 
     local greatestGenNum
     greatestGenNum=$( \
-        nix-env --list-generations --profile "$genProfilePath" \
-            | tail -1 \
-            | sed -E 's/ *([[:digit:]]+) .*/\1/')
+        find "$profilesPath" -name '@GEN_LINK_PREFIX@-*-link' \
+            | sed 's/^.*-\([0-9]*\)-link$/\1/' \
+            | sort -rn \
+            | head -1)
 
     if [[ -n $greatestGenNum ]] ; then
         declare -gr oldGenNum=$greatestGenNum
@@ -22,19 +23,29 @@ function setupVars() {
         declare -gr newGenNum=1
     fi
 
-    if [[ -e $profilesPath/home-manager ]] ; then
-        oldGenPath="$(readlink -e "$profilesPath/home-manager")"
-        declare -gr oldGenPath
+    if [[ -e $gcPath/@GC_LINK_NAME@ ]] ; then
+        oldGenPath="$(readlink -e "$gcPath/@GC_LINK_NAME@")"
     fi
 
     $VERBOSE_RUN _i "Sanity checking oldGenNum and oldGenPath"
     if [[ -v oldGenNum && ! -v oldGenPath
             || ! -v oldGenNum && -v oldGenPath ]]; then
-        _i $'The previous generation number and path are in conflict! These\nmust be either both empty or both set but are now set to\n\n    \'%s\' and \'%s\'\n\nIf you don\'t mind losing previous profile generations then\nthe easiest solution is probably to run\n\n   rm %s/home-manager*\n   rm %s/current-home\n\nand trying home-manager switch again. Good luck!' \
-           "${oldGenNum:-}" "${oldGenPath:-}" \
-           "$profilesPath" "$gcPath"
+        errorEcho "Invalid profile number and GC root values! These must be"
+        errorEcho "either both empty or both set but are now set to"
+        errorEcho "    '${oldGenNum:-}' and '${oldGenPath:-}'"
+        errorEcho "If you don't mind losing previous profile generations then"
+        errorEcho "the easiest solution is probably to run"
+        errorEcho "   rm $profilesPath/@GEN_LINK_PREFIX@*"
+        errorEcho "   rm $gcPath/@GC_LINK_NAME@"
+        errorEcho "and trying home-manager switch again. Good luck!"
         exit 1
     fi
+
+
+    genProfilePath="$profilesPath/@GEN_LINK_PREFIX@"
+    newGenPath="@GENERATION_DIR@";
+    newGenProfilePath="$profilesPath/@GEN_LINK_PREFIX@-$newGenNum-link"
+    newGenGcPath="$gcPath/@GC_LINK_NAME@"
 }
 
 if [[ -v VERBOSE ]]; then
