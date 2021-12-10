@@ -492,7 +492,7 @@ in
         }
 
         # Environment variables
-        . "${config.home.profileDirectory}/etc/profile.d/hm-session-vars.sh"
+        . "${config.home.profileDirectory}/etc/profile.d/${config.home.sessionVariablesFileName}"
         ${envVarsStr}
 
         ${optionalString cfg.oh-my-zsh.enable ''

@@ -187,7 +187,7 @@ in
       '';
 
       home.file.".profile".source = pkgs.writeShellScript "profile" ''
-        . "${config.home.profileDirectory}/etc/profile.d/hm-session-vars.sh"
+        . "${config.home.profileDirectory}/etc/profile.d/${config.home.sessionVariablesFileName}"
 
         ${sessionVarsStr}
 

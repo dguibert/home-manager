@@ -5,9 +5,9 @@ function setupVars() {
     local profilesPath="$nixStateDir/profiles/per-user/$USER"
     local gcPath="$nixStateDir/gcroots/per-user/$USER"
 
-    declare -gr genProfilePath="$profilesPath/home-manager"
+    declare -gr genProfilePath="$profilesPath/@GEN_LINK_PREFIX@"
     declare -gr newGenPath="@GENERATION_DIR@";
-    declare -gr newGenGcPath="$gcPath/current-home"
+    declare -gr newGenGcPath="$gcPath/@GC_LINK_NAME@"
 
     local greatestGenNum
     greatestGenNum=$( \
@@ -22,8 +22,8 @@ function setupVars() {
         declare -gr newGenNum=1
     fi
 
-    if [[ -e $profilesPath/home-manager ]] ; then
-        oldGenPath="$(readlink -e "$profilesPath/home-manager")"
+    if [[ -e $profilesPath/@GEN_LINK_PREFIX@ ]] ; then
+        oldGenPath="$(readlink -e "$profilesPath/@GEN_LINK_PREFIX@")"
         declare -gr oldGenPath
     fi
 
@@ -35,8 +35,8 @@ function setupVars() {
         errorEcho "    '${oldGenNum:-}' and '${oldGenPath:-}'"
         errorEcho "If you don't mind losing previous profile generations then"
         errorEcho "the easiest solution is probably to run"
-        errorEcho "   rm $profilesPath/home-manager*"
-        errorEcho "   rm $gcPath/current-home"
+        errorEcho "   rm $profilesPath/@GEN_LINK_PREFIX@*"
+        errorEcho "   rm $gcPath/@GC_LINK_NAME@"
         errorEcho "and trying home-manager switch again. Good luck!"
         exit 1
     fi
