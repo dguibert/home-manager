@@ -51,7 +51,7 @@ in {
       };
 
       historySize = mkOption {
-        type = types.int;
+        type = types.ints.s32;
         default = 10000;
         description = "Number of history lines to keep in memory.";
       };
@@ -63,7 +63,7 @@ in {
       };
 
       historyFileSize = mkOption {
-        type = types.int;
+        type = types.ints.s32;
         default = 100000;
         description = "Number of history lines to keep on file.";
       };
