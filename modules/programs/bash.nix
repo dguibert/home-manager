@@ -31,7 +31,7 @@ in
       enable = mkEnableOption "GNU Bourne-Again SHell";
 
       historySize = mkOption {
-        type = types.int;
+        type = types.nullOr types.int;
         default = 10000;
         description = "Number of history lines to keep in memory.";
       };
@@ -43,7 +43,7 @@ in
       };
 
       historyFileSize = mkOption {
-        type = types.int;
+        type = types.nullOr types.int;
         default = 100000;
         description = "Number of history lines to keep on file.";
       };
@@ -171,8 +171,8 @@ in
       historyControlStr =
         concatStringsSep "\n" (mapAttrsToList (n: v: "${n}=${v}") (
           {
-            HISTFILESIZE = toString cfg.historyFileSize;
-            HISTSIZE = toString cfg.historySize;
+            HISTFILESIZE = if (cfg.historyFileSize != null) then (toString cfg.historyFileSize) else "";
+            HISTSIZE = if (cfg.historySize != null) then (toString cfg.historySize) else "";
           }
           // optionalAttrs (cfg.historyFile != null) {
             HISTFILE = "\"${cfg.historyFile}\"";
