@@ -8,7 +8,6 @@ function setupVars() {
     declare -gr nixProfilePath="$profilesPath/profile"
     declare -gr genProfilePath="$profilesPath/@GEN_LINK_PREFIX@"
     declare -gr newGenPath="@GENERATION_DIR@";
-    declare -gr newGenProfilePath="$profilesPath/@GEN_LINK_PREFIX@-$newGenNum-link"
     declare -gr newGenGcPath="$gcPath/@GC_LINK_NAME@"
 
     local greatestGenNum
@@ -24,6 +23,7 @@ function setupVars() {
     else
         declare -gr newGenNum=1
     fi
+    declare -gr newGenProfilePath="$profilesPath/@GEN_LINK_PREFIX@-$newGenNum-link"
 
     if [[ -e $gcPath/@GC_LINK_NAME@ ]] ; then
         oldGenPath="$(readlink -e "$gcPath/@GC_LINK_NAME@")"
