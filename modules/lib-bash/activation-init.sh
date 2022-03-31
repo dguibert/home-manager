@@ -6,9 +6,10 @@ function setupVars() {
     local gcPath="$nixStateDir/gcroots/per-user/$USER"
 
     declare -gr nixProfilePath="$profilesPath/profile"
-    declare -gr genProfilePath="$profilesPath/home-manager"
+    declare -gr genProfilePath="$profilesPath/@GEN_LINK_PREFIX@"
     declare -gr newGenPath="@GENERATION_DIR@";
-    declare -gr newGenGcPath="$gcPath/current-home"
+    declare -gr newGenProfilePath="$profilesPath/@GEN_LINK_PREFIX@-$newGenNum-link"
+    declare -gr newGenGcPath="$gcPath/@GC_LINK_NAME@"
 
     local greatestGenNum
     greatestGenNum=$( \
@@ -43,10 +44,6 @@ function setupVars() {
     fi
 
 
-    genProfilePath="$profilesPath/@GEN_LINK_PREFIX@"
-    newGenPath="@GENERATION_DIR@";
-    newGenProfilePath="$profilesPath/@GEN_LINK_PREFIX@-$newGenNum-link"
-    newGenGcPath="$gcPath/@GC_LINK_NAME@"
 }
 
 if [[ -v VERBOSE ]]; then
