@@ -181,7 +181,7 @@ in
             HISTCONTROL = concatStringsSep ":" cfg.historyControl;
           }
           // optionalAttrs (cfg.historyIgnore != []) {
-            HISTIGNORE = concatStringsSep ":" cfg.historyIgnore;
+            HISTIGNORE = "\"${concatStringsSep ":" cfg.historyIgnore}\"";
           }
         ));
     in mkIf cfg.enable {
