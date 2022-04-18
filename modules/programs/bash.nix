@@ -183,11 +183,11 @@ in {
         HISTFILESIZE = toString cfg.historyFileSize;
         HISTSIZE = toString cfg.historySize;
       } // optionalAttrs (cfg.historyFile != null) {
-        HISTFILE = ''"${cfg.historyFile}"'';
-      } // optionalAttrs (cfg.historyControl != [ ]) {
+        HISTFILE = "\"${cfg.historyFile}\"";
+      } // optionalAttrs (cfg.historyControl != []) {
         HISTCONTROL = concatStringsSep ":" cfg.historyControl;
-      } // optionalAttrs (cfg.historyIgnore != [ ]) {
-        HISTIGNORE = escapeShellArg (concatStringsSep ":" cfg.historyIgnore);
+      } // optionalAttrs (cfg.historyIgnore != []) {
+        HISTIGNORE = "\"${concatStringsSep ":" cfg.historyIgnore}\"";
       }));
   in mkIf cfg.enable {
     home.file.".bash_profile".source = writeBashScript "bash_profile" ''
