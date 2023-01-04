@@ -227,7 +227,7 @@ in
         "''${home.homeDirectory}/.nix-profile"  or
         "/etc/profiles/per-user/''${home.username}"
       '';
-      readOnly = true;
+      #readOnly = true;
       description = ''
         The profile directory where Home Manager generations are installed.
       '';
