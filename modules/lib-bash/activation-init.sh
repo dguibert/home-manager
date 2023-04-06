@@ -49,10 +49,9 @@ function setupVars() {
         mkdir -m 0755 -p "$hmProfilesDir"
     fi
 
-    declare -gr nixProfilePath="$profilesPath/profile"
-    declare -gr genProfilePath="$profilesPath/@GEN_LINK_PREFIX@"
+    declare -gr genProfilePath="$hmProfilesDir/@GEN_LINK_PREFIX@"
     declare -gr newGenPath="@GENERATION_DIR@";
-    declare -gr newGenGcPath="$gcPath/@GC_LINK_NAME@"
+    declare -gr newGenGcPath="$hmGcrootsDir/@GC_LINK_NAME@"
     declare -gr legacyGenGcPath="$globalGcrootsDir/current-home"
 
     declare greatestGenNum
@@ -68,9 +67,9 @@ function setupVars() {
         declare -gr newGenNum=1
     fi
 
-    if [[ -e $profilesPath/@GEN_LINK_PREFIX@ ]] ; then
-        oldGenPath="$(readlink -e "$profilesPath/@GEN_LINK_PREFIX@")"
-        declare -gr oldGenPath
+    if [[ -e $genProfilePath ]] ; then
+        declare -g oldGenPath
+        oldGenPath="$(readlink -e "$genProfilePath")"
     fi
 
     $VERBOSE_RUN _i "Sanity checking oldGenNum and oldGenPath"
