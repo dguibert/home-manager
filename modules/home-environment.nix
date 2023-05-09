@@ -628,11 +628,10 @@ in
       if config.submoduleSupport.externalPackageInstall
       then
         ''
-          if [[ -e $HOME/.nix-profile/manifest.json ]] ; then
-            nix profile list \
-              | { grep 'home-manager-path$' || test $? = 1; } \
-              | cut -d ' ' -f 4 \
-              | xargs -t $DRY_RUN_CMD nix profile remove $VERBOSE_ARG
+          if [[ -e ${config.home.profileDirectory}/manifest.json ]] ; then
+            nix profile list  --profile "$(readlink "${config.home.profileDirectory}")"\
+              | { grep '${config.home.pathName}$' || test $? = 1; } \
+              | xargs -t $DRY_RUN_CMD nix profile remove --profile "$(readlink "${config.home.profileDirectory}")" $VERBOSE_ARG
           else
             if nix-env -q | grep '^${config.home.pathName}$'; then
               $DRY_RUN_CMD nix-env -e ${config.home.pathName}
@@ -645,32 +644,32 @@ in
             # We attempt to use `--json` first (added in Nix 2.17). Otherwise attempt to
             # parse the legacy output format.
             {
-              nix profile list --json 2>/dev/null \
+              nix profile list --profile "$(readlink "${config.home.profileDirectory}")" --json 2>/dev/null \
                 | jq -r --arg name "$1" '.elements[].storePaths[] | select(endswith($name))'
             } || {
-              nix profile list \
+              nix profile list --profile "$(readlink "${config.home.profileDirectory}")" \
                 | { grep "$1\$" || test $? = 1; } \
                 | cut -d ' ' -f 4
             }
           }
 
           function nixRemoveProfileByName() {
-              nixProfileList "$1" | xargs -t $DRY_RUN_CMD nix profile remove $VERBOSE_ARG
+              nixProfileList "$1" | xargs -t $DRY_RUN_CMD nix profile remove --profile "$(readlink "${config.home.profileDirectory}")" $VERBOSE_ARG
           }
 
           function nixReplaceProfile() {
             local oldNix="$(command -v nix)"
 
-            nixRemoveProfileByName 'home-manager-path'
+            nixRemoveProfileByName '${config.home.pathName}'
 
-            $DRY_RUN_CMD $oldNix profile install $1
+            $DRY_RUN_CMD $oldNix profile install --profile "$(readlink "${config.home.profileDirectory}")" $1
           }
 
-          if [[ -e $HOME/.nix-profile/manifest.json ]] ; then
-            INSTALL_CMD="nix profile install"
+          if [[ -e ${config.home.profileDirectory}/manifest.json ]] ; then
+            INSTALL_CMD="nix profile install --profile "$(readlink "${config.home.profileDirectory}")""
             INSTALL_CMD_ACTUAL="nixReplaceProfile"
-            LIST_CMD="nix profile list"
-            REMOVE_CMD_SYNTAX='nix profile remove {number | store path}'
+            LIST_CMD="nix profile list --profile "$(readlink "${config.home.profileDirectory}")""
+            REMOVE_CMD_SYNTAX='nix profile remove --profile "$(readlink "${config.home.profileDirectory}")" {number | store path}'
           else
             INSTALL_CMD="nix-env -i"
             INSTALL_CMD_ACTUAL="$DRY_RUN_CMD nix-env -i"
