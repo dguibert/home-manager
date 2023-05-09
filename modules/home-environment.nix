@@ -644,19 +644,19 @@ in
           function nixReplaceProfile() {
             local oldNix="$(command -v nix)"
 
-            nix profile list \
-              | { grep 'home-manager-path$' || test $? = 1; } \
+            nix profile list --profile "$(readlink "${config.home.profileDirectory}")" \
+              | { grep '${config.home.pathName}$' || test $? = 1; } \
               | cut -d ' ' -f 4 \
-              | xargs -t $DRY_RUN_CMD nix profile remove $VERBOSE_ARG
+              | xargs -t $DRY_RUN_CMD nix profile remove --profile "$(readlink "${config.home.profileDirectory}")" $VERBOSE_ARG
 
-            $DRY_RUN_CMD $oldNix profile install $1
+            $DRY_RUN_CMD $oldNix profile install --profile "$(readlink "${config.home.profileDirectory}")" $1
           }
 
           if [[ -e $HOME/.nix-profile/manifest.json ]] ; then
             INSTALL_CMD="nix profile install"
             INSTALL_CMD_ACTUAL="nixReplaceProfile"
             LIST_CMD="nix profile list"
-            REMOVE_CMD_SYNTAX='nix profile remove {number | store path}'
+            REMOVE_CMD_SYNTAX='nix profile remove --profile "$(readlink "${config.home.profileDirectory}")" {number | store path}'
           else
             INSTALL_CMD="nix-env -i"
             INSTALL_CMD_ACTUAL="$DRY_RUN_CMD nix-env -i"
