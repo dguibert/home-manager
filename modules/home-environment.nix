@@ -630,8 +630,7 @@ in
         ''
           if [[ -e $HOME/.nix-profile/manifest.json ]] ; then
             nix profile list \
-              | { grep 'home-manager-path$' || test $? = 1; } \
-              | cut -d ' ' -f 4 \
+              | { grep '${config.home.pathName}$' || test $? = 1; } \
               | xargs -t $DRY_RUN_CMD nix profile remove $VERBOSE_ARG
           else
             if nix-env -q | grep '^${config.home.pathName}$'; then
@@ -646,7 +645,6 @@ in
 
             nix profile list --profile "$(readlink "${config.home.profileDirectory}")" \
               | { grep '${config.home.pathName}$' || test $? = 1; } \
-              | cut -d ' ' -f 4 \
               | xargs -t $DRY_RUN_CMD nix profile remove --profile "$(readlink "${config.home.profileDirectory}")" $VERBOSE_ARG
 
             $DRY_RUN_CMD $oldNix profile install --profile "$(readlink "${config.home.profileDirectory}")" $1
