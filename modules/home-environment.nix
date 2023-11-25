@@ -665,7 +665,7 @@ in
             $DRY_RUN_CMD $oldNix profile install --profile "$(readlink "${config.home.profileDirectory}")" $1
           }
 
-          if [[ -e $HOME/.nix-profile/manifest.json ]] ; then
+          if [[ -e ${config.home.profileDirectory}/manifest.json ]] ; then
             INSTALL_CMD="nix profile install --profile "$(readlink "${config.home.profileDirectory}")""
             INSTALL_CMD_ACTUAL="nixReplaceProfile"
             LIST_CMD="nix profile list --profile "$(readlink "${config.home.profileDirectory}")""
