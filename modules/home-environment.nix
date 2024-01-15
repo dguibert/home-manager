@@ -460,6 +460,12 @@ in
       description = "The package containing the complete activation script.";
     };
 
+    home.activationPackageSet = mkOption {
+      type = with types; attrsOf anything;
+      default = pkgs;
+      description = "The package set to be used to in the complete activation script.";
+    };
+
     home.extraActivationPath = mkOption {
       internal = true;
       type = types.listOf types.package;
@@ -727,7 +733,7 @@ in
         # Programs that always should be available on the activation
         # script's PATH.
         activationBinPaths = lib.makeBinPath (
-          with pkgs; [
+          with home.activationPackageSet; [
             bash
             coreutils
             diffutils           # For `cmp` and `diff`.
@@ -746,11 +752,11 @@ in
           if config.nix.enable && config.nix.package != null then
             ":${config.nix.package}/bin"
           else
-            ":$(${pkgs.coreutils}/bin/dirname $(${pkgs.coreutils}/bin/readlink -m $(type -p nix-env)))"
+            ":$(${home.activationPackageSet.coreutils}/bin/dirname $(${home.activationPackageSet.coreutils}/bin/readlink -m $(type -p nix-env)))"
         )
         + optionalString (!cfg.emptyActivationPath) "\${PATH:+:}$PATH";
 
-        activationScript = pkgs.writeShellScript "activation-script" ''
+        activationScript = home.activationPackageSet.writeShellScript "activation-script" ''
           set -eu
           set -o pipefail
 
