@@ -85,16 +85,16 @@ in {
     '';
 
     home.activation.dconfSettings = hm.dag.entryAfter [ "installPackages" ] (let
-      iniFile = pkgs.writeText "hm-dconf.ini" (toDconfIni cfg.settings);
+      iniFile = cfg.activationPackageSet.writeText "hm-dconf.ini" (toDconfIni cfg.settings);
 
       statePath = "state/${stateDconfKeys.name}";
 
-      cleanup = pkgs.writeShellScript "dconf-cleanup" ''
+      cleanup = cfg.activationPackageSet.writeShellScript "dconf-cleanup" ''
         set -euo pipefail
 
         ${config.lib.bash.initHomeManagerLib}
 
-        PATH=${makeBinPath [ pkgs.dconf pkgs.jq ]}''${PATH:+:}$PATH
+        PATH=${makeBinPath [ cfg.activationPackageSet.dconf cfg.activationPackageSet.jq ]}''${PATH:+:}$PATH
 
         oldState="$1"
         newState="$2"
