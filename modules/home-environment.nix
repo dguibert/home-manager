@@ -176,7 +176,7 @@ in
       done automatically if the shell configuration is managed by Home
       Manager. If not, then you must source the
 
-        ${cfg.profileDirectory}/etc/profile.d/hm-session-vars.sh
+        ${cfg.profileDirectory}/etc/profile.d/${config.home.sessionVariablesFileName}
 
       file yourself.
     '')
@@ -367,6 +367,15 @@ in
         expanded by the shell. However, since expressions like `~` or
         `*` are escaped, they will end up in the environment
         verbatim.
+      '';
+    };
+
+    home.sessionVariablesFileName = mkOption {
+      type = types.str;
+      default = "hm-session-vars.sh";
+      internal = true;
+      description = ''
+        The name of the file for the session variables.
       '';
     };
 
@@ -654,8 +663,8 @@ in
 
     # Provide a file holding all session variables.
     home.sessionVariablesPackage = pkgs.writeTextFile {
-      name = "hm-session-vars.sh";
-      destination = "/etc/profile.d/hm-session-vars.sh";
+      name = config.home.sessionVariablesFileName;
+      destination = "/etc/profile.d/${config.home.sessionVariablesFileName}";
       text = ''
         # Only source this once.
         if [ -n "$__HM_SESS_VARS_SOURCED" ]; then return; fi

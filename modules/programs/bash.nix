@@ -265,7 +265,7 @@ in
       );
 
       home.file.".profile".source = writeBashScript "profile" ''
-        . "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh"
+        . "${config.home.sessionVariablesPackage}/etc/profile.d/${config.home.sessionVariablesFileName}"
 
         ${sessionVarsStr}
 
