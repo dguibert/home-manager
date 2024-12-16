@@ -9,25 +9,25 @@ function migrateProfile() {
     declare -r globalNixStateDir="${NIX_STATE_DIR:-/nix/var/nix}"
     declare -r globalProfilesDir="$globalNixStateDir/profiles/per-user/$USER"
 
-    if [[ -e $globalProfilesDir/home-manager ]]; then
+    if [[ -e $globalProfilesDir/@GENERATION_LINK_NAME_PREFIX@ ]]; then
         declare -r oldProfilesDir="$globalProfilesDir"
-    elif [[ -e $hmStateDir/profiles/home-manager ]]; then
+    elif [[ -e $hmStateDir/profiles/@GENERATION_LINK_NAME_PREFIX@ ]]; then
         declare -r oldProfilesDir="$hmStateDir/profiles"
     fi
 
     declare -r newProfilesDir="$userNixStateDir/profiles"
 
     if [[ -v oldProfilesDir && -e $newProfilesDir ]]; then
-        if [[ ! -e $newProfilesDir/home-manager ]]; then
+        if [[ ! -e $newProfilesDir/@GENERATION_LINK_NAME_PREFIX@ ]]; then
             _i 'Migrating profile from %s to %s' "$oldProfilesDir" "$newProfilesDir"
-            for p in "$oldProfilesDir"/home-manager-*; do
+            for p in "$oldProfilesDir"/@GENERATION_LINK_NAME_PREFIX@-*; do
                 declare name="${p##*/}"
                 nix-store --realise "$p" --add-root "$newProfilesDir/$name" > /dev/null
             done
-            cp -P "$oldProfilesDir/home-manager" "$newProfilesDir"
+            cp -P "$oldProfilesDir/@GENERATION_LINK_NAME_PREFIX@" "$newProfilesDir"
         fi
 
-        rm "$oldProfilesDir/home-manager" "$oldProfilesDir"/home-manager-*
+        rm "$oldProfilesDir/@GENERATION_LINK_NAME_PREFIX@" "$oldProfilesDir"/@GENERATION_LINK_NAME_PREFIX@-*
     fi
 }
 
@@ -57,11 +57,11 @@ function setupVars() {
     fi
 
     declare -gr hmDataPath="${XDG_DATA_HOME:-$HOME/.local/share}/home-manager"
-    declare -gr genProfilePath="$profilesDir/home-manager"
+    declare -gr genProfilePath="$profilesDir/@GENERATION_LINK_NAME_PREFIX@"
     declare -gr newGenPath="@GENERATION_DIR@";
-    declare -gr newGenGcPath="$hmGcrootsDir/new-home"
-    declare -gr currentGenGcPath="$hmGcrootsDir/current-home"
-    declare -gr legacyGenGcPath="$globalGcrootsDir/current-home"
+    declare -gr newGenGcPath="$hmGcrootsDir/new-@GC_LINK_NAME@"
+    declare -gr currentGenGcPath="$hmGcrootsDir/@GC_LINK_NAME@"
+    declare -gr legacyGenGcPath="$globalGcrootsDir/@GC_LINK_NAME@"
 
     if [[ -e $currentGenGcPath ]] ; then
         declare -g oldGenPath
