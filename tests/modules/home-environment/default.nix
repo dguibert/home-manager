@@ -5,6 +5,9 @@
   generation-link-name-prefix-default =
     ./generation-link-name-prefix-default.nix;
 
+  home-path-drv-name-custom = ./home-path-drv-name-custom.nix;
+  home-path-drv-name-default = ./home-path-drv-name-default.nix;
+
   home-session-path = ./session-path.nix;
   home-session-search-variables = ./session-search-variables.nix;
   home-session-variables = ./session-variables.nix;

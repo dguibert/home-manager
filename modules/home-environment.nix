@@ -431,6 +431,13 @@ in
       description = "The derivation installing the user packages.";
     };
 
+    home.pathName = mkOption {
+      type = types.str;
+      default = "home-manager-path";
+      internal = true;
+      description = "The name of the derivation installing the user packages.";
+    };
+
     home.emptyActivationPath = mkOption {
       internal = true;
       type = types.bool;
@@ -699,18 +706,18 @@ in
     #
     # In case the user has moved from a user-install of Home Manager
     # to a submodule managed one we attempt to uninstall the
-    # `home-manager-path` package if it is installed.
+    # `${config.home.pathName}` package if it is installed.
     home.activation.installPackages = lib.hm.dag.entryAfter [ "writeBoundary" ] (
       if config.submoduleSupport.externalPackageInstall then
         ''
-          nixProfileRemove home-manager-path
+          nixProfileRemove ${config.home.pathName}
         ''
       else
         ''
           function nixReplaceProfile() {
             local oldNix="$(command -v nix)"
 
-            nixProfileRemove 'home-manager-path'
+            nixProfileRemove '${config.home.pathName}'
 
             run $oldNix profile install $1
           }
@@ -913,7 +920,7 @@ in
         '';
 
     home.path = pkgs.buildEnv {
-      name = "home-manager-path";
+      name = config.home.pathName;
 
       paths = cfg.packages;
       inherit (cfg) extraOutputsToInstall;
