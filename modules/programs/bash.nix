@@ -203,6 +203,31 @@ in
           interactive shell.
         '';
       };
+
+      bashProfileFile = mkOption {
+        type = types.str;
+        default = ".bash_profile";
+        description = "bash_profile filename (default .bash_profile)";
+      };
+
+      bashrcFile = mkOption {
+        type = types.str;
+        default = ".bashrc";
+        description = "bashrc filename (default .bashrc)";
+      };
+
+      profileFile = mkOption {
+        type = types.str;
+        default = ".profile";
+        description = "profile filename (default .profile)";
+      };
+
+      bashLogoutFile = mkOption {
+        type = types.str;
+        default = ".bash_logout";
+        description = "bash_logout filename (default .bash_logout)";
+      };
+
     };
   };
 
@@ -246,12 +271,12 @@ in
     mkIf cfg.enable {
       home.packages = lib.mkIf (cfg.package != null) [ cfg.package ];
 
-      home.file.".bash_profile".source = writeBashScript "bash_profile" ''
-        # include .profile if it exists
-        [[ -f ~/.profile ]] && . ~/.profile
+      home.file."${cfg.bashProfileFile}".source = writeBashScript "bash_profile" ''
+        # include ${cfg.profileFile} if it exists
+        [[ -f ~/${cfg.profileFile} ]] && . ~/${cfg.profileFile}
 
-        # include .bashrc if it exists
-        [[ -f ~/.bashrc ]] && . ~/.bashrc
+        # include ${cfg.bashrcFile} if it exists
+        [[ -f ~/${cfg.bashrcFile} ]] && . ~/${cfg.bashrcFile}
       '';
 
       # If completion is enabled then make sure it is sourced very early. This
@@ -265,15 +290,15 @@ in
         ''
       );
 
-      home.file.".profile".source = writeBashScript "profile" ''
-        . "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh"
+      home.file."${cfg.profileFile}".source = writeBashScript "profile" ''
+        . "${config.home.sessionVariablesPackage}/etc/profile.d/${config.home.sessionVariablesFileName}"
 
         ${sessionVarsStr}
 
         ${cfg.profileExtra}
       '';
 
-      home.file.".bashrc".source = writeBashScript "bashrc" ''
+      home.file."${cfg.bashrcFile}".source = writeBashScript "bashrc" ''
         ${cfg.bashrcExtra}
 
         # Commands that should be applied only for interactive shells.
@@ -288,7 +313,7 @@ in
         ${cfg.initExtra}
       '';
 
-      home.file.".bash_logout" = mkIf (cfg.logoutExtra != "") {
+      home.file."${cfg.bashLogoutFile}" = mkIf (cfg.logoutExtra != "") {
         source = writeBashScript "bash_logout" cfg.logoutExtra;
       };
     };
