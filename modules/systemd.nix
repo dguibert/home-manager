@@ -2,9 +2,9 @@
   config,
   lib,
   pkgs,
+  activationPkgs,
   ...
 }:
-
 let
 
   cfg = config.systemd.user;
@@ -498,7 +498,7 @@ in
             timeoutArg = if cfg.servicesStartTimeoutMs != 0 then "--timeout " + servicesStartTimeoutMs else "";
           in
           ''
-            ${lib.getExe pkgs.sd-switch} \
+            ${lib.getExe activationPkgs.sd-switch} \
               ''${DRY_RUN:+--dry-run} $VERBOSE_ARG ${timeoutArg} \
               ''${oldUnitsDir:+--old-units $oldUnitsDir} \
               --new-units "$newUnitsDir"

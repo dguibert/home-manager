@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  activationPkgs,
   ...
 }:
 
@@ -832,7 +833,7 @@ in
         # script's PATH.
         activationBinPaths =
           lib.makeBinPath (
-            with pkgs;
+            with activationPkgs;
             [
               bash
               coreutils
@@ -856,7 +857,7 @@ in
           )
           + lib.optionalString (!cfg.emptyActivationPath) "\${PATH:+:}$PATH";
 
-        activationScript = pkgs.writeShellScript "activation-script" ''
+        activationScript = activationPkgs.writeShellScript "activation-script" ''
           set -eu
           set -o pipefail
 

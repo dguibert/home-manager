@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  activationPkgs,
   ...
 }:
 
@@ -125,15 +126,15 @@ in
 
           statePath = "state/${db.stateDconfKeys.name}";
 
-          cleanup = pkgs.writeShellScript "dconf-cleanup" ''
+          cleanup = activationPkgs.writeShellScript "dconf-cleanup" ''
             set -euo pipefail
 
             ${config.lib.bash.initHomeManagerLib}
 
             PATH=${
               lib.makeBinPath [
-                pkgs.dconf
-                pkgs.jq
+                activationPkgs.dconf
+                activationPkgs.jq
               ]
             }''${PATH:+:}$PATH
 
@@ -162,7 +163,7 @@ in
           if [[ -v DBUS_SESSION_BUS_ADDRESS ]]; then
             export DCONF_DBUS_RUN_SESSION="${envCommand}"
           else
-            export DCONF_DBUS_RUN_SESSION="${pkgs.dbus}/bin/dbus-run-session --dbus-daemon=${pkgs.dbus}/bin/dbus-daemon ${envCommand}"
+            export DCONF_DBUS_RUN_SESSION="${activationPkgs.dbus}/bin/dbus-run-session --dbus-daemon=${activationPkgs.dbus}/bin/dbus-daemon ${envCommand}"
           fi
 
           if [[ -v oldGenPath ]]; then
